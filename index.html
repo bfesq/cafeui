@@ -1,161 +1,229 @@
-      
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="node_modules/patternfly/dist/css/patternfly.css">
-  <link rel="stylesheet" type="text/css" href="node_modules/patternfly/dist/css/patternfly-additions.css">
-<link rel="stylesheet" href="node_modules/patternfly/dist/css/patternfly.css">
-<link rel="stylesheet" href="node_modules/patternfly/dist/css/patternfly-additions.css">
-<link rel="stylesheet" href="node_modules/patternfly-webcomponents/dist/css/patternfly-webcomponents.css">
-  <script src="node_modules/jquery/dist/jquery.js"></script>
-  <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
-<script src="node_modules/webcomponents/webcomponentsjs/webcomponents-lite.min.js"></script>
-<script src="node_modules/patternfly-webcomponents/dist/js/patternfly.js"></script>
-</head>
-<body>
-  <nav class="navbar navbar-default navbar-pf" role="navigation">
-  <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="/">
-      <img src="/assets/img/brand.svg" alt="PatternFly Enterprise Application" />
-    </a>
-  </div>
-  <div class="collapse navbar-collapse navbar-collapse-1">
-    <ul class="nav navbar-nav navbar-utility">
-      
-      <li class="dropdown">
-        <button class="btn btn-link nav-item-iconic" id="horizontalDropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          <span title="Help" class="fa pficon-help dropdown-title"></span>
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="horizontalDropdownMenu1">
-          <li><a href="#0">Help</a></li>
-          <li><a href="#0">About</a></li>
-        </ul>
-      </li>
-      <li class="dropdown">
-        <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-          <span class="pficon pficon-user"></span>
-          <span class="dropdown-title">
-            Brian Johnson <b class="caret"></b>
-          </span>
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a href="#0">Link</a>
-          </li>
-          <li>
-            <a href="#0">Another link</a>
-          </li>
-          <li>
-            <a href="#0">Something else here</a>
-          </li>
-          <li class="divider"></li>
-          <li class="dropdown-submenu">
-            <a tabindex="-1" href="#0">More options</a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#0">Link</a>
-              </li>
-              <li>
-                <a href="#0">Another link</a>
-              </li>
-              <li>
-                <a href="#0">Something else here</a>
-              </li>
-              <li class="divider"></li>
-              <li class="dropdown-header">Nav header</li>
-              <li>
-                <a href="#0">Separated link</a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <a href="#0">One more separated link</a>
-              </li>
-            </ul>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a href="#0">One more separated link</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="nav navbar-nav navbar-primary">
-      <li>
-        <a href="#0">First Link</a>
-      </li>
-      <li class="active">
-        <a href="#0">Another Link</a>
-      </li>
-      <li>
-        <a href="#0">And Another</a>
-      </li>
-      <li>
-        <a href="#0">As a General Rule</a>
-      </li>
-      <li>
-        <a href="#0">Five to Seven Links</a>
-      </li>
-      <li>
-        <a href="#0">Is Good</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-  <div class="container">
+<!DOCTYPE HTML>
+<html>
+  <head>
+		<meta charset="utf-8" />
+    	<title>Melbourne Cafes</title>
 
-    <!-- Just enjoy various PatternFly components -->
-    <div class="alert alert-success">
-      <span class="pficon pficon-ok"></span>
-      <strong>Great job!</strong> This is really working out <a href="#" class="alert-link">great for us</a>.
-    </div>
+	
+		<!-- include leaflet css and javascript -->
+		<link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+		<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+		
+		<link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.css" />
+		<link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css" />
 
-  </div>
-<button class="btn btn-default" data-toggle="modal" data-target="#myModal">Launch demo modal</button>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
-          <span class="pficon pficon-close"></span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel">Modal Title</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-horizontal">
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="textInput">Field One</label>
-            <div class="col-sm-9">
-              <input type="text" id="textInput" class="form-control"></div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="textInput2">Field Two</label>
-            <div class="col-sm-9">
-              <input type="text" id="textInput2" class="form-control"></div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-3 control-label" for="textInput3">Field Three</label>
-            <div class="col-sm-9">
-              <input type="text" id="textInput3" class="form-control">
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Save</button>
-      </div>
-    </div>
-  </div>
-</div>
+		<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
 
-</body>
+		<link rel="stylesheet" href="node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" >
+
+
+
+		<link rel="stylesheet" href="node_modules/beautifymarker/leaflet-beautify-marker-icon.css"/>
+		<link rel="stylesheet" href="static/leaflet/messagebox/leaflet-messagebox.css"/>
+		
+		<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.css"/>
+		<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.structure.min.css"/>
+		<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.theme.min.css"/>
+	
+		<link rel="stylesheet" href="node_modules/selectize/dist/css/selectize.default.css" />
+		<link rel="stylesheet" href="node_modules/selectize/examples/css/normalize.css" />
+		<link rel="stylesheet"  href="node_modules/selectize/examples/css/stylesheet.css" />
+		<!-- include our own css -->
+		<link rel="stylesheet" href="static/maps.css" />
+		<link rel="stylesheet" href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+		
+		<script src="node_modules/jquery/dist/jquery.js"></script>
+		<script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
+		
+		<script src="node_modules/bootstrap/dist/js/bootstrap.min.js" ></script>
+		<script src="node_modules/leaflet/dist/leaflet.js" ></script>
+		<script src="node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+		<script src="node_modules/beautifymarker/leaflet-beautify-marker-icon.js"></script>
+
+		<script src="static/leaflet/messagebox/leaflet-messagebox.js"></script>
+	
+	
+		
+		
+		<!-- For websockets -->
+		<script src="node_modules/sockjs/lib/sockjs.js"></script>
+		<script src="node_modules/stomp/lib/stomp.js"></script>
+		<script src="node_modules/selectize/dist/js/standalone/selectize.min.js"></script>
+		
+		<script src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+		<script src="node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
+	</head>
+
+	<body>
+		<div id="head" class="row">
+			
+			<div>
+			<span class="title">Melbourne Cafe's</span>
+			</div>
+		</div>
+		
+		<div id="filter" class="row">
+			<div style="padding:10px;">
+				<label for="input-tags" class="demo-default">Search:<input type="text" id="input-tags" value="" size="60" ></label>
+			</div>
+			
+		</div>
+		<script>
+			$(function() {
+
+				 $("[name='my-checkbox']").bootstrapSwitch({
+					onText: 'View as List',
+					offText: 'View as Map',
+					onSwitchChange: function(event, state) {
+						if (state) {
+							$("#map").show();
+							$("#table").hide();
+						} else {
+							$("#map").hide();
+							$("#table").show();
+						}
+					}
+				 });
+		  	});
+			
+		</script>
+		
+		<div class="row">
+			<div id="table" style="display:none" class="mainmap">
+				<table id="cafetable" class="display" style="width:100%" >
+		        <thead>
+		            <tr>
+		                <th>Name</th>
+		                <th>Address</th>
+		                <th>Seating</th>
+		                <th>Star Rating</th>
+		            </tr>
+		        </thead>
+		        <tfoot>
+		            <tr>
+		               <th>Name</th>
+		                <th>Address</th>
+		                <th>Seating</th>
+		                <th>Star Rating</th>
+		            </tr>
+		        </tfoot>
+				</table>
+			</div>
+			<div id="map" class="mainmap">
+					
+			</div>
+			<script src="static/maps.js"></script>
+			<div id="">
+				<div style="padding:10px;">
+					<input type="checkbox" name="my-checkbox" checked>
+				</div>
+				<div class="btn-div">
+				<button class="btn btn-default" data-toggle="modal" data-target="#myModal">Add a Review</button>
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+				          <span class="pficon pficon-close"></span>
+				        </button>
+				        <h4 class="modal-title" id="myModalLabel">Add a Review</h4>
+				      </div>
+				      <div class="modal-body">
+				        <form class="form-horizontal">
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput">Date</label>
+				            <div class="col-sm-9">
+				              <input name="datetime" id="datetime" class="form-control" />
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput2">Trading Name</label>
+				            <div class="col-sm-9">
+				              <input name="tradingname" type="text" id="textInput2" class="form-control"></div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput3">Stars</label>
+				            <div class="col-sm-9">
+				              <input type="text" id="textInput3" class="form-control">
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput3">Description</label>
+				            <div class="col-sm-9">
+				              <input name="description" type="text" id="textInput3" class="form-control" size="80">
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput3">Your Name</label>
+				            <div class="col-sm-9">
+				              <input name="yourname" type="text" id="textInput3" class="form-control">
+				            </div>
+				          </div>
+				          </div>
+				        </form>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="button" class="btn btn-primary">Save</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				</div>
+				<div class="btn-div">
+				<button class="btn btn-default" data-toggle="modal" data-target="#myModal2">Add a Cafe</button>
+				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+				          <span class="pficon pficon-close"></span>
+				        </button>
+				        <h4 class="modal-title" id="myModalLabel">Add a Cafe</h4>
+				      </div>
+				      <div class="modal-body">
+				        <form class="form-horizontal">
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput">Trading Name</label>
+				            <div class="col-sm-9">
+				              <input name="tradingname" type="text" id="textInput" class="form-control"></div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput2">Street Address</label>
+				            <div class="col-sm-9">
+				              <input name="address type" type="text" id="textInput2" class="form-control"></div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-3 control-label" for="textInput2">Your Email</label>
+				            <div class="col-sm-9">
+				              <input name="email" type="text" id="textInput2" class="form-control"></div>
+				          </div>
+				        </form>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="button" class="btn btn-primary">Save</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				</div>
+				
+				<script>
+					$(function() {
+	
+						$('#datetime').datepicker();
+				  });
+					
+				</script>
+			</div>
+		</div>	
+		
+		
+		<div class="row">
+			
+			<p><br/>Demonstration of Microservice Design on Red Hat OpenShift Container Platform<br/><br/><br/></p>
+			
+		</div>
+	</body>
 </html>
-
-    
