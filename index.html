@@ -4,7 +4,7 @@
 		<meta charset="utf-8" />
     	<title>Melbourne Cafes</title>
 
-	
+			<link rel="stylesheet" href="static/stylesheet.css" />
 		<!-- include leaflet css and javascript -->
 		<link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
 		<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
@@ -25,9 +25,6 @@
 		<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.structure.min.css"/>
 		<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.theme.min.css"/>
 	
-		<link rel="stylesheet" href="node_modules/selectize/dist/css/selectize.default.css" />
-		<link rel="stylesheet" href="node_modules/selectize/examples/css/normalize.css" />
-		<link rel="stylesheet"  href="node_modules/selectize/examples/css/stylesheet.css" />
 		<!-- include our own css -->
 		<link rel="stylesheet" href="static/maps.css" />
 		<link rel="stylesheet" href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
@@ -36,6 +33,7 @@
 		<script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
 		
 		<script src="node_modules/bootstrap/dist/js/bootstrap.min.js" ></script>
+
 		<script src="node_modules/leaflet/dist/leaflet.js" ></script>
 		<script src="node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
@@ -44,12 +42,6 @@
 		<script src="static/leaflet/messagebox/leaflet-messagebox.js"></script>
 	
 	
-		
-		
-		<!-- For websockets -->
-		<script src="node_modules/sockjs/lib/sockjs.js"></script>
-		<script src="node_modules/stomp/lib/stomp.js"></script>
-		<script src="node_modules/selectize/dist/js/standalone/selectize.min.js"></script>
 		
 		<script src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 		<script src="node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
@@ -63,30 +55,55 @@
 			</div>
 		</div>
 		
-		<div id="filter" class="row">
-			<div style="padding:10px;">
-				<label for="input-tags" class="demo-default">Search:<input type="text" id="input-tags" value="" size="60" ></label>
-			</div>
-			
+		<div id="control" class="row">
+				<input type="checkbox" name="my-checkbox" checked>
+				<div style="padding-left:40px;"></div>
+					<button class="btn btn-default" data-toggle="modal" data-target="#myModal2">Add a Cafe</button>
+				</div>
 		</div>
-		<script>
-			$(function() {
+		<div id="filter" class="row">
+			<div id="filterinput" style="padding:10px;">
+				<label for="input-tags" class="demo-default">Search:<input type="text" id="searchMap" value="" size="60" ></label>
+			</div>
+		</div>
 
+		<script>
+			var currentDataSet = null;
+			$(function() {
+				// Init the data table
+				var datatable =  $('#cafetable').DataTable( {
+					data: currentDataSet,
+					"columns": [
+									{ "data": "name" },
+									{ "data": "area" },
+									{ "data": "address" },
+									{ "data": "info" },
+									{ "data": "rating" }
+
+					],
+					"deferRender": true
+				} );
 				 $("[name='my-checkbox']").bootstrapSwitch({
 					onText: 'View as List',
 					offText: 'View as Map',
 					onSwitchChange: function(event, state) {
 						if (state) {
 							$("#map").show();
+							$("#filterinput").show();
 							$("#table").hide();
 						} else {
 							$("#map").hide();
+							$("#filterinput").hide();
 							$("#table").show();
+							datatable.clear();
+          		datatable.rows.add(currentDataSet);
+          		datatable.draw();
 						}
 					}
 				 });
 		  	});
 			
+				
 		</script>
 		
 		<div class="row">
@@ -94,18 +111,20 @@
 				<table id="cafetable" class="display" style="width:100%" >
 		        <thead>
 		            <tr>
-		                <th>Name</th>
-		                <th>Address</th>
-		                <th>Seating</th>
-		                <th>Star Rating</th>
+										<th>Name</th>
+										<th>Area</th>
+										<th>Address</th>
+										<th>Info</th>
+										<th>Rating</th>
 		            </tr>
 		        </thead>
 		        <tfoot>
 		            <tr>
-		               <th>Name</th>
-		                <th>Address</th>
-		                <th>Seating</th>
-		                <th>Star Rating</th>
+									 <th>Name</th>
+									 <th>Area</th>
+									 <th>Address</th>
+									 <th>Info</th>
+									 <th>Rating</th>
 		            </tr>
 		        </tfoot>
 				</table>
@@ -115,11 +134,9 @@
 			</div>
 			<script src="static/maps.js"></script>
 			<div id="">
-				<div style="padding:10px;">
-					<input type="checkbox" name="my-checkbox" checked>
-				</div>
+				
 				<div class="btn-div">
-				<button class="btn btn-default" data-toggle="modal" data-target="#myModal">Add a Review</button>
+				<!-- <button id="addAReview" class="btn btn-default" data-toggle="modal" data-target="#myModal">Add a Review</button> -->
 				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
@@ -131,26 +148,44 @@
 				      </div>
 				      <div class="modal-body">
 				        <form class="form-horizontal">
+									<input name="id" id="geoid" type="hidden" />
 				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput">Date</label>
+				            <label class="control-label" for="tradingName" style="padding-left:15px">Trading Name</label>
 				            <div class="col-sm-9">
-				              <input name="datetime" id="datetime" class="form-control" />
-				          </div>
+				              <input name="tradingname" type="text" id="tradingName" class="form-control" readonly></div>
+									</div>
+									<div class="form-group">
+											<label class="col-sm-3 control-label" for="address">Address</label>
+											<div class="col-sm-9">
+												<input name="address" type="text" id="address" class="form-control" readonly></div>
+										</div>
+									<div class="form-group">
+											<label class="control-label" for="textInput" style="padding-left:15px">When were you there?</label>
+											<div class="col-sm-9">
+												<input name="datetime" id="datetime" class="form-control" />
+										</div>
 				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput2">Trading Name</label>
+				            <label class="col-sm-3 control-label" for="textInput3">Select a Rating</label>
 				            <div class="col-sm-9">
-				              <input name="tradingname" type="text" id="textInput2" class="form-control"></div>
-				          </div>
-				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput3">Stars</label>
-				            <div class="col-sm-9">
-				              <input type="text" id="textInput3" class="form-control">
+												<span class="starRating">
+														<input id="rating5" type="radio" name="rating" value="5">
+														<label for="rating5">5</label>
+														<input id="rating4" type="radio" name="rating" value="4">
+														<label for="rating4">4</label>
+														<input id="rating3" type="radio" name="rating" value="3" checked>
+														<label for="rating3">3</label>
+														<input id="rating2" type="radio" name="rating" value="2">
+														<label for="rating2">2</label>
+														<input id="rating1" type="radio" name="rating" value="1">
+														<label for="rating1">1</label>
+													</span>
 				            </div>
 				          </div>
 				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput3">Description</label>
+				            <label class="control-label" for="textInput3" style="padding-left:15px">What would you like to say?</label>
 				            <div class="col-sm-9">
-				              <input name="description" type="text" id="textInput3" class="form-control" size="80">
+				              <textarea rows="5" cols="80" name="review" type="text" id="yourreview" class="form-control">
+											</textarea>
 				            </div>
 				          </div>
 				          <div class="form-group">
@@ -171,7 +206,7 @@
 				</div>
 				</div>
 				<div class="btn-div">
-				<button class="btn btn-default" data-toggle="modal" data-target="#myModal2">Add a Cafe</button>
+			
 				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
@@ -184,19 +219,19 @@
 				      <div class="modal-body">
 				        <form class="form-horizontal">
 				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput">Trading Name</label>
+				            <label class="col-sm-3 control-label" for="add_textInput">Trading Name</label>
 				            <div class="col-sm-9">
-				              <input name="tradingname" type="text" id="textInput" class="form-control"></div>
+				              <input name="add_tradingname" type="text" id="add_textInput" class="form-control"></div>
 				          </div>
 				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput2">Street Address</label>
+				            <label class="col-sm-3 control-label" for="add_address">Street Address</label>
 				            <div class="col-sm-9">
-				              <input name="address type" type="text" id="textInput2" class="form-control"></div>
+				              <input name="add_address" type="text" id="add_address" class="form-control"></div>
 				          </div>
 				          <div class="form-group">
-				            <label class="col-sm-3 control-label" for="textInput2">Your Email</label>
+				            <label class="col-sm-3 control-label" for="add_email">Your Email</label>
 				            <div class="col-sm-9">
-				              <input name="email" type="text" id="textInput2" class="form-control"></div>
+				              <input name="add_email" type="text" id="add_email" class="form-control"></div>
 				          </div>
 				        </form>
 				      </div>

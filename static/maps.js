@@ -11,7 +11,7 @@
 
 /************************
  * BEGIN OF WEBSOCKETS COMM
- ************************/
+
 var stompClient = null;
 
 function connect() {
@@ -29,8 +29,38 @@ function connect() {
 		});
 	});
 }
-// TODO: Reconnect automatically. When redeploying application, need to reconnect, otherwise page needs to be reloaded
-// Look for solution like: https://github.com/jmesnil/stomp-websocket/issues/81#issuecomment-246854734
+
+
+function disconnect() {
+	if (stompClient != null) {
+		stompClient.disconnect();
+	}
+	setConnected(false);
+	console.log("Disconnected");
+}
+ ************************/
+
+var getDefaultBackEnd = function(type) {
+	var center = {
+		"latitude": -37.8131, 
+		"longitude": 144.9621
+	}
+	var point = {
+		center : center
+	};
+	var backendFromServer = {
+		id: type,
+		displayName: 'Cafes',
+		center: point,
+		zoom: 10,
+		type: type,
+		visible: true,
+		scope: 'all' ,
+		maxzoom: 1
+	};
+
+	return getBackend(backendFromServer)
+}
 
 // Backend types: {popup_marker,marker,heatmap,temp}
 var getBackend = function(backendFromServer) {
@@ -94,13 +124,6 @@ var getBackend = function(backendFromServer) {
 	return backend;
 }
 
-function disconnect() {
-	if (stompClient != null) {
-		stompClient.disconnect();
-	}
-	setConnected(false);
-	console.log("Disconnected");
-}
 
 
 /************************
@@ -108,6 +131,7 @@ function disconnect() {
  ************************/
 
 var backends = new Map();
+
 
 var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 	'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -132,8 +156,8 @@ var grayscale = L.tileLayer(mbUrl, {
 
 
 var map = L.map('map', {
-	center: [-37.8136, 144.9631],
-	zoom: 10
+	center: [-37.8131, 144.9621],
+	zoom: 12
 });
 
 
@@ -141,11 +165,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-/*
-L.marker([-37.505, 139.00]).addTo(map)
-		.bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-		.openPopup();
-*/
+
 var baseLayers = {
 	"Classic": classic,
 	"Grayscale": grayscale,
@@ -191,21 +211,11 @@ function addBackend(backend) {
 	map.setView([backend.center.latitude, backend.center.longitude], backend.zoom);
 }
 
-function qAll() {
-	$.get("http://geoservice-review-cafe.192.168.99.100.nip.io/ws/data/?type=cafe" , function(data) {
-		console.log("Displaying " + data.length + " points from backend ");
-		var dataPoints = [];
-		for (var i = 0; i < data.length; i++) {
-			dataPoint = data[i];
-			showMarker('marker', dataPoint);
-		}
-		console.log("Done");
-	}, "json");
-}
 function queryAll(backend) {
 	// Expected dataPoint { name, latitude, longitude, details }
 	
-	$.get("/ws/data/all?service=" + backend.id, function(data) {
+	$.get("/all", function(data) {
+		currentDataSet = data;
 		console.log("Displaying " + data.length + " points from backend " + backend.id);
 		var dataPoints = [];
 		for (var i = 0; i < data.length; i++) {
@@ -223,7 +233,6 @@ function queryAll(backend) {
 			}
 		}
 		console.log("Done");
-		$('#map').spin(false);
 	}, "json");
 }
 
@@ -233,11 +242,12 @@ function queryWithin(backend) {
 			console.log("Querying data for backend: " + backend.id);
 
 			var bounds = map.getBounds();
-			var url = "/ws/data/within?service=" + backend.id + "&lat1=" + bounds.getNorthWest().lat + "&lon1=" + bounds.getNorthWest().lng + "&lat2=" + bounds.getSouthEast().lat + "&lon2=" + bounds.getSouthEast().lng;
+			var url = "/within&lat1=" + bounds.getNorthWest().lat + "&lon1=" + bounds.getNorthWest().lng + "&lat2=" + bounds.getSouthEast().lat + "&lon2=" + bounds.getSouthEast().lng;
 
 			// Expected dataPoint { name, latitude, longitude, details }
-			$('#map').spin();
+
 			$.get(url, function(data) {
+				currentDataSet = data;
 				// Clear previous points
 				backend.layer.clearLayers();
 
@@ -258,7 +268,7 @@ function queryWithin(backend) {
 					}
 				}
 				console.log("Done");
-				$('#map').spin(false);
+
 			}, "json");
 		} else {
 			msgBox.show('No data querying for ' + backend.displayName + ' at this level of zoom');
@@ -281,29 +291,27 @@ function removeBackend(backendId) {
 	}
 }
 
-// TODO: Change initial load to only queryWithins
-function initialLoad() {
-	qAll();
-	backends.clear();
-	$.get("/ws/backends/list", function(data) {
-		for (var i = 0; i < data.length; i++) {
-			var backendFromServer = data[i];
-			var backend = getBackend(backendFromServer);
-			addBackend(backend);
-		}
-	}, "json");
+function populateReview(address, id, name) {
+	$('#address').val(address);
+	$('#geoid').val(id);
+	$('#tradingName').val(name);
+
 }
 
 function showCluster(backend, dataPoint) {
-	var popupInformation = "<b>" + dataPoint.name + "</b></br>";
-	// TODO: Work additionalInfo
+	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
+	'<a data-toggle="modal" data-target="#myModal" href="" onclick="javascript:populateReview(' + "'" + dataPoint.address + "','" +
+		dataPoint.id + "','" + dataPoint.name + "'" + ')">Add a Review</a>';
+
 	var marker = L.marker([dataPoint.latitude, dataPoint.longitude]).bindPopup(popupInformation);
 	marker.addTo(backend.layer);
 }
 
 function showMarker(backend, dataPoint) {
-	var popupInformation = "<b>" + dataPoint.name + "</b></br>";
-	// TODO: Work additionalInfo
+	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
+	'<a data-toggle="modal" data-target="#myModal" href="" onclick="javascript:populateReview(' + "'" + dataPoint.address + "','" +
+		dataPoint.id + "','" + dataPoint.name + "'" + ')">Add a Review</a>';
+
 	var marker = L.marker([dataPoint.latitude, dataPoint.longitude]).bindPopup(popupInformation);
 	marker.addTo(backend.layer);
 }
@@ -359,27 +367,45 @@ function showTemp(backend, dataPoint) {
 	}
 }
 
+/*
 function timeout() {
 	// Set a timeout to load/unload backends
 	setTimeout(function() {
 		// Get notified of registrations/unregistrations
 		console.log("map was panned!");
-		//$('#map').panTo(new L.LatLng(40.737, -73.923));
+		map.panTo(new L.LatLng(40.737, -73.923));
 		timeout();
 	}, 5000);
 }
 
 timeout();
+*/
 
 
-map.whenReady(initialLoad); //.whenReady(connect);
-map.on('moveend', queryWithinAll);
-map.on('moveend', function() {
-	console.log("map was panned!");
-	console.log("zoom: " + map.getZoom()); // prints out zoom level
-	console.log("center: " + map.getCenter()); // prints out map center
+
+function initialLoad() {
+	var clusterBackend = getDefaultBackEnd('cluster');
+	addBackend(clusterBackend);
+	queryAll(clusterBackend);
+	
+}
+
+$(document).ready(function() {
+
+	map.whenReady(initialLoad); 
+	map.on('moveend', queryWithinAll);
+	map.on('moveend', function() {
+		console.log("map was panned!");
+		console.log("zoom: " + map.getZoom()); // prints out zoom level
+		console.log("center: " + map.getCenter()); // prints out map center
+	});
+	map.on('overlayadd', onOverlayAdd).on('overlayremove', onOverlayRemove);
+
+	
+	
+	
+
 });
-map.on('overlayadd', onOverlayAdd).on('overlayremove', onOverlayRemove);
 
 function onOverlayAdd(e) {
 	backends.forEach(function(backend, backendId, thisMap) {
@@ -399,10 +425,3 @@ function onOverlayRemove(e) {
 	});
 }
 
-$(document).ready(function() {
-    $('#cafetable').DataTable( {
-        "ajax": '.static/cafe.json'
-    } );
-    
-   
-} );
