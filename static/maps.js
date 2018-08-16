@@ -297,9 +297,22 @@ function populateReview(address, id, name) {
 	$('#tradingName').val(name);
 
 }
+function populateReviewModal(address, id, name) {
+	$('#addressr').val(address);
+	$('#geoidr').val(id);
+	$('#tradingNamer').val(name);
+
+}
 
 function showCluster(backend, dataPoint) {
-	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
+	var stars = '<span class="starRating"><input id="rating5" type="radio" name="rating" value="5"><label for="rating5">5</label><input id="rating4" type="radio" name="rating" value="4">' 
+	+ '<label for="rating4">4</label><input id="rating3" type="radio" name="rating" value="3" checked><label for="rating3">3</label>'
+				+ '<input id="rating2" type="radio" name="rating" value="2"><label for="rating2">2</label><input id="rating1" type="radio" name="rating" value="1">'
+				+ '<label for="rating1">1</label></span>';
+
+	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + stars + "</br>" + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
+	'<a data-toggle="modal" data-target="#myModal3" href="" onclick="javascript:populateReviewModal(' + "'" + dataPoint.address + "','" +
+		dataPoint.id + "','" + dataPoint.name + "'" + ')">Reviews</a></br>' +
 	'<a data-toggle="modal" data-target="#myModal" href="" onclick="javascript:populateReview(' + "'" + dataPoint.address + "','" +
 		dataPoint.id + "','" + dataPoint.name + "'" + ')">Add a Review</a>';
 
@@ -309,6 +322,8 @@ function showCluster(backend, dataPoint) {
 
 function showMarker(backend, dataPoint) {
 	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
+	'<a data-toggle="modal" data-target="#myModal3" href="" onclick="javascript:populateReviewModal(' + "'" + dataPoint.address + "','" +
+		dataPoint.id + "','" + dataPoint.name + "'" + ')">Reviews</a></br>' +
 	'<a data-toggle="modal" data-target="#myModal" href="" onclick="javascript:populateReview(' + "'" + dataPoint.address + "','" +
 		dataPoint.id + "','" + dataPoint.name + "'" + ')">Add a Review</a>';
 
