@@ -33,6 +33,7 @@
 		<script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
 		
 		<script src="node_modules/bootstrap/dist/js/bootstrap.min.js" ></script>
+		<script src="node_modules/jquery-serializeobject/jquery.serializeObject.js"></script>
 
 		<script src="node_modules/leaflet/dist/leaflet.js" ></script>
 		<script src="node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
@@ -40,7 +41,7 @@
 		<script src="node_modules/beautifymarker/leaflet-beautify-marker-icon.js"></script>
 
 		<script src="static/leaflet/messagebox/leaflet-messagebox.js"></script>
-	
+		<script src="node_modules/dateformat/lib/dateformat.js"></script>
 	
 		
 		<script src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -63,7 +64,10 @@
 		</div>
 		<div id="filter" class="row">
 			<div id="filterinput" style="padding:10px;">
-				<label for="input-tags" class="demo-default">Search:<input type="text" id="searchMap" value="" size="60" ></label>
+				<label for="input-tags" class="demo-default">
+					<input type="text" id="searchMap" value="" size="60" ><span>     </span><button id="searchbtn" class="btn btn-default">Search</button>
+					<span>     </span><button id="searchreset" class="btn btn-default">Reset</button>
+				</label>
 			</div>
 		</div>
 
@@ -78,8 +82,7 @@
 									{ "data": "name" },
 									{ "data": "area" },
 									{ "data": "address" },
-									{ "data": "info" },
-									{ "data": "rating" }
+									{ "data": "info" }
 
 					],
 					"deferRender": true,
@@ -91,7 +94,7 @@
 						"columnDefs": [
 								{
 										"targets": [ 0 ],
-										"visible": false,
+										"visible": true,
 										"searchable": true
 								}
 						]
@@ -138,7 +141,6 @@
 										<th>Area</th>
 										<th>Address</th>
 										<th>Info</th>
-										<th>Rating</th>
 		            </tr>
 		        </thead>
 		        <tfoot>
@@ -148,7 +150,6 @@
 									 <th>Area</th>
 									 <th>Address</th>
 									 <th>Info</th>
-									 <th>Rating</th>
 		            </tr>
 		        </tfoot>
 				</table>
@@ -171,7 +172,7 @@
 				        <h4 class="modal-title" id="myModalLabel">Add a Review</h4>
 				      </div>
 				      <div class="modal-body">
-				        <form class="form-horizontal">
+				        <form id="addreviewform" class="form-horizontal">
 									<input name="id" id="geoid" type="hidden" />
 				          <div class="form-group">
 				            <label class="control-label" for="tradingName" style="padding-left:15px">Trading Name</label>
@@ -186,7 +187,7 @@
 									<div class="form-group">
 											<label class="control-label" for="textInput" style="padding-left:15px">When were you there?</label>
 											<div class="col-sm-9">
-												<input name="datetime" id="datetime" class="form-control" />
+												<input name="dateReviewed" id="datetime" class="form-control" />
 										</div>
 				          <div class="form-group">
 				            <label class="control-label" for="textInput3" style="padding-left:15px">Select a Rating</label>
@@ -208,14 +209,14 @@
 				          <div class="form-group">
 				            <label class="control-label" for="textInput3" style="padding-left:15px">What would you like to say?</label>
 				            <div class="col-sm-9">
-				              <textarea rows="5" cols="80" name="review" type="text" id="yourreview" class="form-control">
+				              <textarea rows="5" cols="80" name="description" type="text" id="yourreview" class="form-control">
 											</textarea>
 				            </div>
 				          </div>
 				          <div class="form-group">
 				            <label class="col-sm-3 control-label" for="textInput3">Your Name</label>
 				            <div class="col-sm-9">
-				              <input name="yourname" type="text" id="textInput3" class="form-control">
+				              <input name="name" type="text" id="textInput3" class="form-control">
 				            </div>
 									</div>
 									<div class="form-group">
@@ -229,7 +230,7 @@
 				      </div>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="button" class="btn btn-primary">Save</button>
+				        <button id="addreviewsave" type="button" class="btn btn-primary">Save</button>
 				      </div>
 				    </div>
 				  </div>
@@ -281,20 +282,20 @@
 				      <div class="modal-header">
 				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
 				          <span class="pficon pficon-close"></span>
-				        </button>
-				        <h4 class="modal-title" id="myModalLabel">Reviews</h4>
+								</button>
+				        <h4 class="modal-title" id="myModalLabel"><span id="avgReviewr" ></span> <span id="tradingNamer" ></span></h4>
 				      </div>
 				      <div class="modal-body">
 								<input name="id" id="geoidr" type="hidden" />
 								<div class="form-group">
-									<div class="col-sm-9">
-										<input name="tradingname" type="text" id="tradingNamer" class="form-control" readonly></div>
+										<p>Address: <span id="addressr" ></span></p>
+										<br/>
 								</div>
-								<div class="form-group">
-										<div class="col-sm-9">
-											<input name="address" type="text" id="addressr" class="form-control" readonly></div>
-									</div>
-				      </div>
+								<div id="reviewcontent">
+
+								</div>
+							</div>
+							
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 				      </div>

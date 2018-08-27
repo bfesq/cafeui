@@ -41,3 +41,15 @@
 .starRating:not(:hover) > :checked ~ label:before{
   opacity : 1;
 }
+
+.stars {
+  color           : #9c3;
+  display         : block;
+  width           : 1.5em;
+  height          : 1.5em;
+  background      : url('star-on.svg');
+  transition      : opacity 0.2s linear;
+  width: 20px;
+  height: 20px;
+  background-size: 20px 20px;
+}

@@ -1,58 +1,15 @@
-/*
- the script mus be loaded after the map div is defined.
- otherwise this will not work (we would need a listener to
- wait for the DOM to be fully loaded).
- Just put the script tag below the map div.
- The source code below is the example from the leaflet start page.
- */
 
-
-
-
-/************************
- * BEGIN OF WEBSOCKETS COMM
-
-var stompClient = null;
-
-function connect() {
-	var socket = new SockJS('/socks-backends');
-	stompClient = Stomp.over(socket);
-	stompClient.connect({}, function(frame) {
-		// console.log('Connected: ' + frame);
-		stompClient.subscribe('/topic/add', function(message) {
-			var backend = getBackend(JSON.parse(message.body));
-			addBackend(backend);
-		});
-		stompClient.subscribe('/topic/remove', function(message) {
-			var backend = getBackend(JSON.parse(message.body));
-			removeBackend(backend.id);
-		});
-	});
-}
-
-
-function disconnect() {
-	if (stompClient != null) {
-		stompClient.disconnect();
-	}
-	setConnected(false);
-	console.log("Disconnected");
-}
- ************************/
 
 var getDefaultBackEnd = function(type) {
-	var center = {
+	var point = {
 		"latitude": -37.8131, 
 		"longitude": 144.9621
-	}
-	var point = {
-		center : center
 	};
 	var backendFromServer = {
 		id: type,
 		displayName: 'Cafes',
 		center: point,
-		zoom: 10,
+		zoom: 12,
 		type: type,
 		visible: true,
 		scope: 'all' ,
@@ -123,12 +80,6 @@ var getBackend = function(backendFromServer) {
 	}
 	return backend;
 }
-
-
-
-/************************
- * END OF WEBSOCKETS COMM
- ************************/
 
 var backends = new Map();
 
@@ -201,6 +152,8 @@ function addBackend(backend) {
 		queryAll(backend);
 	} else if (backend.scope == 'within') {
 		queryWithin(backend);
+	} else if (backend.scope == 'search') {
+		searchAll(backend.searchterm, backend);
 	}
 
 	// Add layer to the map
@@ -209,6 +162,31 @@ function addBackend(backend) {
 
 	// Focus map on the backend center and zoom
 	map.setView([backend.center.latitude, backend.center.longitude], backend.zoom);
+}
+
+function searchAll(searchterm, backend) {
+	// Expected dataPoint { name, latitude, longitude, details }
+	
+	$.get("/searchall?searchterm="+searchterm, function(data) {
+		currentDataSet = data;
+		console.log("Displaying " + data.length + " points from backend " + backend.id);
+		var dataPoints = [];
+		for (var i = 0; i < data.length; i++) {
+			dataPoint = data[i];
+			if (backend.type == 'cluster') {
+				showCluster(backend, dataPoint);
+			} else if (backend.type == 'heatmap') {
+				showHeatmap(backend, dataPoint);
+			} else if (backend.type == 'marker') {
+				showMarker(backend, dataPoint);
+			} else if (backend.type == 'temp') {
+				showTemp(backend, dataPoint);
+			} else {
+				console.log("Backend type " + backend.type + " not supported")
+			}
+		}
+		console.log("Done");
+	}, "json");
 }
 
 function queryAll(backend) {
@@ -298,19 +276,55 @@ function populateReview(address, id, name) {
 
 }
 function populateReviewModal(address, id, name) {
-	$('#addressr').val(address);
+	$('#addressr').html(address);
 	$('#geoidr').val(id);
-	$('#tradingNamer').val(name);
+	$('#tradingNamer').html(name);
 
+	// ajax calls get all reviews for this geoid
+	$.get( "/reviewavg?geoid=1", function( data ) {
+		data = $.parseJSON(data);
+		stars = getStarsHtml(data);
+		
+		$('#avgReviewr').html(stars);
+	});
+
+
+	// ajax calls get all reviews for this geoid
+	$.get( "/review?geoid=1", function( data ) {
+		data = $.parseJSON(data);
+		$("#reviewcontent").html('');
+		$.each(data, function(i, item) {
+			var d = new Date(item.dateReviewed);
+			var theyear = d.getFullYear();
+			var themonth = d.getMonth() + 1;
+			var thetoday = d.getDate();
+
+    		$("#reviewcontent").append(
+				"<div class='form-group' >" +
+				thetoday + "/" + themonth + "/" + theyear  + ", " + item.name + "<br/>" +
+				item.description + "<br/>" +
+				getStarsHtml(item.rating) + "<br/>" 
+				+ "</div>"
+			)
+		});
+
+	  });
 }
 
+function getStarsHtml(n) {
+	// returns num
+	var text = '<table><tr>';
+	var i;
+	for (i = 1; i <= n; i++) { 
+		text += '<td><a class="stars"></a></td>';
+	}
+	text += '</tr></table>'
+	return text;
+}
 function showCluster(backend, dataPoint) {
-	var stars = '<span class="starRating"><input id="rating5" type="radio" name="rating" value="5"><label for="rating5">5</label><input id="rating4" type="radio" name="rating" value="4">' 
-	+ '<label for="rating4">4</label><input id="rating3" type="radio" name="rating" value="3" checked><label for="rating3">3</label>'
-				+ '<input id="rating2" type="radio" name="rating" value="2"><label for="rating2">2</label><input id="rating1" type="radio" name="rating" value="1">'
-				+ '<label for="rating1">1</label></span>';
+	
 
-	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + stars + "</br>" + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
+	var popupInformation = "<b>" + dataPoint.name + "</b></br>"  + dataPoint.address + "</br>" + dataPoint.info + "</br>" +
 	'<a data-toggle="modal" data-target="#myModal3" href="" onclick="javascript:populateReviewModal(' + "'" + dataPoint.address + "','" +
 		dataPoint.id + "','" + dataPoint.name + "'" + ')">Reviews</a></br>' +
 	'<a data-toggle="modal" data-target="#myModal" href="" onclick="javascript:populateReview(' + "'" + dataPoint.address + "','" +
@@ -382,30 +396,33 @@ function showTemp(backend, dataPoint) {
 	}
 }
 
-/*
-function timeout() {
-	// Set a timeout to load/unload backends
-	setTimeout(function() {
-		// Get notified of registrations/unregistrations
-		console.log("map was panned!");
-		map.panTo(new L.LatLng(40.737, -73.923));
-		timeout();
-	}, 5000);
-}
-
-timeout();
-*/
-
 
 
 function initialLoad() {
 	var clusterBackend = getDefaultBackEnd('cluster');
-	addBackend(clusterBackend);
-	queryAll(clusterBackend);
-	
+	addBackend(clusterBackend);	
 }
 
 $(document).ready(function() {
+	$("#searchreset").click(function(){
+		$("#searchMap").val('');
+		initialLoad();
+	});
+	$("#searchbtn").click(function(){
+		var clusterBackend = getDefaultBackEnd('cluster');
+		clusterBackend.scope = 'search';
+		clusterBackend.searchterm = $("#searchMap").val();
+		addBackend(clusterBackend);
+	});
+	$(document).keypress(function(event) {
+		if (event.key === "Enter") {
+			$("#searchbtn").click();
+		}
+	});
+	
+	$('#addreviewsave').click( function() {
+		alert($('#addreviewform').serializeObject());
+	});
 
 	map.whenReady(initialLoad); 
 	map.on('moveend', queryWithinAll);
