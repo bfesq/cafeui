@@ -27,7 +27,6 @@ display: none;
   justify-content: center; /* for centering 3 blocks in the center */
   /* justify-content: space-between; for space in between */ 
   background-color: rgb(75, 54, 33);
-  color: white;
 }
 
 .rowmap {
@@ -40,6 +39,7 @@ display: none;
     background-image: url("images/beans-brown-coffee-34085.jpg");
     background-repeat: repeat-x;
     background-size: cover;
+    color: blue !important!;
   }
 
 .btn-div {

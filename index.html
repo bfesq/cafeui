@@ -45,6 +45,7 @@
 	
 		
 		<script src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
 		<script src="node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
 
 		<script src="node_modules/jquery-serializejson/jquery.serializejson.min.js"></script>
@@ -90,7 +91,10 @@
 					"deferRender": true,
 					"initComplete": function () {
             $( document ).on("click", "tr[role='row']", function(){
-                 alert($(this).children('td:first-child').text())
+								 var geoid = $(this).children('td:first-child').text();
+								 if (geoid) {
+									 	locateGeoOnMap(geoid);
+								 }
             });
 						},
 						"columnDefs": [
@@ -134,7 +138,7 @@
 		</script>
 		
 		<div class="rowmap">
-			<div id="table" style="display:none" class="mainmap">
+			<div id="table" style="display:none" class="mainmap row">
 				<table id="cafetable" class="display" style="width:100%" >
 		        <thead>
 		            <tr>

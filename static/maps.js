@@ -137,6 +137,30 @@ var options = {
 }
 var msgBox = L.control.messagebox(options).addTo(map);
 
+
+function locateGeoOnMap(geoid) {
+	// locate this geoid coordinates
+	if (currentDataSet) {
+		for (var i = 0; i < currentDataSet.length; i++) {
+			dataPoint = currentDataSet[i];
+			if (dataPoint.id == geoid) {
+				// match
+				if (isNaN(dataPoint.latitude) || isNaN(dataPoint.longitude)) {
+					console.log("Invalid Data Point: " + dataPoint);
+				} else {
+					$("#table").hide();
+					// switch to map
+					$("#map").show();
+					$("#filterinput").show();
+					
+					map.flyTo([dataPoint.latitude, dataPoint.longitude],17);
+					return;
+				}
+			}
+		}
+		
+	}
+}
 function addBackend(backend) {
 	console.log("Adding layer for backend: " + backend.id);
 

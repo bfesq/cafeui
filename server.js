@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
 });
 
 console.log(process.env);
-
+/*
 process.env['GEOSERVICE_SERVICE_HOST']='geoservice-review-cafe.192.168.99.100.nip.io';
 process.env['GEOSERVICE_SERVICE_PORT']='80';
 
@@ -31,7 +31,7 @@ process.env['REVIEWQUERY_SERVICE_PORT']='80';
 
 process.env['REVIEWUPDATE_SERVICE_HOST']='reviewupdate-review-cafe.192.168.99.100.nip.io';
 process.env['REVIEWUPDATE_SERVICE_PORT']='80';
-
+*/
 
 app.get('/within', (req, res) => {
     var greeter = "http://" 
