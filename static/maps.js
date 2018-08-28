@@ -280,6 +280,8 @@ function populateReviewModal(address, id, name) {
 	$('#geoidr').val(id);
 	$('#tradingNamer').html(name);
 
+	$("#reviewcontent").html('');
+
 	// ajax calls get all reviews for this geoid
 	$.get( "/reviewavg?geoid="+id, function( data ) {
 		data = $.parseJSON(data);
@@ -292,7 +294,6 @@ function populateReviewModal(address, id, name) {
 	// ajax calls get all reviews for this geoid
 	$.get( "/review?geoid="+id, function( data ) {
 		data = $.parseJSON(data);
-		$("#reviewcontent").html('');
 		$.each(data, function(i, item) {
 			var d = new Date(item.dateReviewed);
 			var theyear = d.getFullYear();
@@ -421,8 +422,6 @@ $(document).ready(function() {
 	});
 	
 	$('#addreviewsave').click( function() {
-		console.log($('#addreviewform').serializeJSON());
-		alert(JSON.stringify($('#addreviewform').serializeJSON()));
 		$.ajax({
 			type: 'POST',
 			cache: false,
@@ -430,7 +429,7 @@ $(document).ready(function() {
 			data: $('#addreviewform').serializeJSON(),
 			datatype: 'json',
 			success: function(data) {
-				alert(data);
+				console.log(data);
 			}
 		  });
 

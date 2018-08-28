@@ -19,78 +19,78 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-
-http://geoservice-review-cafe.192.168.99.100.nip.io/ws/data/?type=cafe
-
-process.env['GEO_QUERY_SERVICE_HOST']='geoservice-review-cafe.192.168.99.100.nip.io';
-process.env['GEO_QUERY_SERVICE_PORT']='80';
-process.env['GEO_QUERY_SERVICE_PATH']='ws/data/';
-
-
-process.env['REVIEW_QUERY_SERVICE_HOST']='reviewquery-review-cafe.192.168.99.100.nip.io';
-process.env['REVIEW_QUERY_SERVICE_PORT']='80';
-process.env['REVIEW_QUERY_SERVICE_PATH']='ws/data/';
+console.log(process.env);
+/*
+process.env['GEOSERVICE_SERVICE_HOST']='geoservice-review-cafe.192.168.99.100.nip.io';
+process.env['GEOSERVICE_SERVICE_PORT']='80';
+process.env['GEOSERVICE_SERVICE_PATH']='ws/data/';
 
 
-process.env['REVIEW_UPDATE_SERVICE_HOST']='reviewupdate-review-cafe.192.168.99.100.nip.io';
-process.env['REVIEW_UPDATE_SERVICE_PORT']='80';
-process.env['REVIEW_UPDATE_SERVICE_PATH']='ws/data/';
+process.env['REVIEWQUERY_SERVICE_HOST']='reviewquery-review-cafe.192.168.99.100.nip.io';
+process.env['REVIEWQUERY_SERVICE_PORT']='80';
+process.env['REVIEWQUERY_SERVICE_PATH']='ws/data/';
+
+
+process.env['REVIEWUPDATE_SERVICE_HOST']='reviewupdate-review-cafe.192.168.99.100.nip.io';
+process.env['REVIEWUPDATE_SERVICE_PORT']='80';
+process.env['REVIEWUPDATE_SERVICE_PATH']='ws/data/';
+*/
 
 app.get('/within', (req, res) => {
     var greeter = "http://" 
-    	+ process.env.GEO_QUERY_SERVICE_HOST 
-    	+ ":" + process.env.GEO_QUERY_SERVICE_PORT 
-        + "/" + process.env.GEO_QUERY_SERVICE_PATH
+    	+ process.env.GEOSERVICE_SERVICE_HOST 
+    	+ ":" + process.env.GEOSERVICE_SERVICE_PORT_HTTP 
+        + "/ws/data/" + 
     	+ "within?type=cafe&lat1=" + req.query['lat1'] + "&lat2=" + req.query['lat2'] + "&lon1=" + req.query['lon1'] + "&lon2=" + req.query['lon2'];
     res.send(get(greeter));
 });
 
 app.get('/all', (req, res) => {
     var greeter = "http://" 
-    	+ process.env.GEO_QUERY_SERVICE_HOST 
-    	+ ":" + process.env.GEO_QUERY_SERVICE_PORT 
-        + "/" + process.env.GEO_QUERY_SERVICE_PATH
-    	+ "/?type=cafe";
+    	+ process.env.GEOSERVICE_SERVICE_HOST 
+    	+ ":" + process.env.GEOSERVICE_SERVICE_PORT_HTTP 
+        + "/ws/data/?type=cafe";
 
     res.send(get(greeter));
 });
 
 app.get('/searchall', (req, res) => {
+    
     var greeter = "http://" 
-    	+ process.env.GEO_QUERY_SERVICE_HOST 
-    	+ ":" + process.env.GEO_QUERY_SERVICE_PORT 
-        + "/" + process.env.GEO_QUERY_SERVICE_PATH
-    	+ "/searchall?type=cafe&searchterm="+ req.query['searchterm'];;
+    	+ process.env.GEOSERVICE_SERVICE_HOST 
+    	+ ":" + process.env.GEOSERVICE_SERVICE_PORT_HTTP 
+        + "/ws/data/searchall?type=cafe&searchterm=" + 
+    	+ req.query['searchterm'];
 
     res.send(get(greeter));
 });
 
 app.get('/review', (req, res) => {
     var greeter = "http://" 
-    	+ process.env.REVIEW_QUERY_SERVICE_HOST 
-    	+ ":" + process.env.REVIEW_QUERY_SERVICE_PORT 
-        + "/" + process.env.REVIEW_QUERY_SERVICE_PATH
-    	+ "/?geoid=" + req.query['geoid'];
+    	+ process.env.REVIEWQUERY_SERVICE_HOST
+    	+ ":" + process.env.REVIEWQUERY_SERVICE_PORT 
+        + "/ws/data/" 
+    	+ "?geoid=" + req.query['geoid'];
 
     res.send(get(greeter));
 });
 
 app.get('/reviewavg', (req, res) => {
     var greeter = "http://" 
-    	+ process.env.REVIEW_QUERY_SERVICE_HOST 
-    	+ ":" + process.env.REVIEW_QUERY_SERVICE_PORT 
-        + "/" + process.env.REVIEW_QUERY_SERVICE_PATH
-    	+ "/avg?geoid=" + req.query['geoid'];
+    	+ process.env.REVIEWQUERY_SERVICE_HOST
+    	+ ":" + process.env.REVIEWQUERY_SERVICE_PORT 
+        + "/ws/data/"  
+    	+ "avg?geoid=" + req.query['geoid'];
 
     res.send(get(greeter));
 });
 
 app.get('/reviewrandomadd', (req, res) => {
     var greeter = "http://" 
-    	+ process.env.REVIEW_UPDATE_SERVICE_HOST 
-    	+ ":" + process.env.REVIEW_UPDATE_SERVICE_PORT 
-        + "/" + process.env.REVIEW_UPDATE_SERVICE_PATH
-    	+ "/addrandomreview?geoid=" + req.query['geoid'];
+    	+ process.env.REVIEWUPDATE_SERVICE_HOST 
+    	+ ":" + process.env.REVIEWUPDATE_SERVICE_PORT 
+        + "/ws/data/" + 
+    	+ "addrandomreview?geoid=" + req.query['geoid'];
     console.log('greeter: ' + greeter);
 
     res.send(get(greeter));
@@ -103,15 +103,10 @@ var jsonParser = bodyParser.json();
 app.post('/reviewadd', jsonParser, function (req, res) {
     if (!req.body) return res.sendStatus(400);
     var greeter = "http://" 
-    	+ process.env.REVIEW_UPDATE_SERVICE_HOST 
-    	+ ":" + process.env.REVIEW_UPDATE_SERVICE_PORT 
-        + "/" + process.env.REVIEW_UPDATE_SERVICE_PATH
+    	+ process.env.REVIEWUPDATE_SERVICE_HOST
+    	+ ":" + process.env.REVIEWUPDATE_SERVICE_PORT 
+        + "/ws/data/"  
     	+ "update";
-    console.log('greeter: ' + greeter);
-    console.log(req.body);
-
-
-    
     post(greeter, req.body);
     res.sendStatus(200);
 });
