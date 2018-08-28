@@ -2,7 +2,8 @@ html {
 	height: 100%;
 }
 body {
-	background-color: rgb(45, 84, 212) !important;
+    background-color: rgb(75, 54, 33) !important;
+    
 	margin: 0 0 0 0;
 	min-height: 100%;
      padding:0; 
@@ -25,8 +26,22 @@ display: none;
   display: flex;
   justify-content: center; /* for centering 3 blocks in the center */
   /* justify-content: space-between; for space in between */ 
-  background-color: rgb(45, 84, 212);
+  background-color: rgb(75, 54, 33);
+  color: white;
 }
+
+.rowmap {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* for centering 3 blocks in the center */
+    /* justify-content: space-between; for space in between */ 
+    background-color: rgb(75, 54, 33);
+    background-image: url("images/beans-brown-coffee-34085.jpg");
+    background-repeat: repeat-x;
+    background-size: cover;
+  }
+
 .btn-div {
 	margin: 5px;
 }
@@ -38,7 +53,7 @@ display: none;
 .mainmap {
 		height: 600px;
 		width:75%;
-		float: left;
+        float: left;
 }
 #mapmenu {
 		height: 600px;
@@ -46,8 +61,7 @@ display: none;
 		float: right;
 }
 #head {
-	width: 100%;
-	background-color: rgb(45, 84, 212);
+    background-color: rgb(75, 54, 33) !important;
 	padding-left: 15px;
 	padding-top: 15px;
 	
@@ -55,8 +69,10 @@ display: none;
 .title {
 	height: 80px;
 	font-size: 50px;
-	color: white;
-	horizontal-align:left;
+	color: rgb(245, 238, 238) !important;
+    text-align:left;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
 }
 
 .selectize-control {
