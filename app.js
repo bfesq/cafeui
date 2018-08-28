@@ -5,7 +5,8 @@ var express = require('express'),
 
 var app = express();
 
-var request = require('sync-request');
+
+
 
 const probe = require('kube-probe');
 
@@ -95,16 +96,24 @@ app.get('/reviewrandomadd', (req, res) => {
     res.send(get(greeter));
 });
 
-app.post('/reviewadd', (req, res) => {
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+var jsonParser = bodyParser.json();
+
+app.post('/reviewadd', jsonParser, function (req, res) {
+    if (!req.body) return res.sendStatus(400);
     var greeter = "http://" 
     	+ process.env.REVIEW_UPDATE_SERVICE_HOST 
     	+ ":" + process.env.REVIEW_UPDATE_SERVICE_PORT 
         + "/" + process.env.REVIEW_UPDATE_SERVICE_PATH
-    	+ "/update";
+    	+ "update";
     console.log('greeter: ' + greeter);
-    console.log('req.body: ' + req.body);
+    console.log(req.body);
 
-    res.send(post(greeter, req.body));
+
+    
+    post(greeter, req.body);
+    res.sendStatus(200);
 });
 
 function get(url) {
@@ -112,27 +121,15 @@ function get(url) {
 }
 
 function post(urlToPost, bodyToPost) {
-    default_headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-us,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
-        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-        'Cache-Control': 'max-age=0'
-    };
+    var requestp = require('request');
 
-    var request = require('sync-request'), default_headers;
-
-    request({
+    requestp.post({
         url: urlToPost,
-        headers: default_headers,
-        method: 'POST',
-        body: JSON.stringify(bodyToPost) 
-        }, function (err, res, body) {
-        if (!err && res.statusCode == 200) {
-            console.log(body);
-        }
-    });
+        json: true,
+        body: bodyToPost
+    }, function(error, response, body){
+        console.log(body);
+      });
 
 }
 

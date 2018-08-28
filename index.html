@@ -46,6 +46,8 @@
 		
 		<script src="http://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 		<script src="node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
+
+		<script src="node_modules/jquery-serializejson/jquery.serializejson.min.js"></script>
 	</head>
 
 	<body>
@@ -173,7 +175,7 @@
 				      </div>
 				      <div class="modal-body">
 				        <form id="addreviewform" class="form-horizontal">
-									<input name="id" id="geoid" type="hidden" />
+									<input name="geoId" id="geoid" type="hidden" />
 				          <div class="form-group">
 				            <label class="control-label" for="tradingName" style="padding-left:15px">Trading Name</label>
 				            <div class="col-sm-9">
@@ -187,7 +189,7 @@
 									<div class="form-group">
 											<label class="control-label" for="textInput" style="padding-left:15px">When were you there?</label>
 											<div class="col-sm-9">
-												<input name="dateReviewed" id="datetime" class="form-control" />
+												<input name="dateReviewed" id="datetime" class="datepicker form-control" />
 										</div>
 				          <div class="form-group">
 				            <label class="control-label" for="textInput3" style="padding-left:15px">Select a Rating</label>
@@ -209,7 +211,7 @@
 				          <div class="form-group">
 				            <label class="control-label" for="textInput3" style="padding-left:15px">What would you like to say?</label>
 				            <div class="col-sm-9">
-				              <textarea rows="5" cols="80" name="description" type="text" id="yourreview" class="form-control">
+				              <textarea rows="5" cols="80" name="description" type="text" id="yourreview" form="addreviewform" class="form-control">
 											</textarea>
 				            </div>
 				          </div>
@@ -229,7 +231,7 @@
 				        </form>
 				      </div>
 				      <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button id="addreviewcancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button id="addreviewsave" type="button" class="btn btn-primary">Save</button>
 				      </div>
 				    </div>
@@ -306,8 +308,9 @@
 
 				<script>
 					$(function() {
-	
-						$('#datetime').datepicker();
+						$('.datepicker').datepicker({
+							dateFormat : "yy-mm-dd"
+						});
 				  });
 					
 				</script>

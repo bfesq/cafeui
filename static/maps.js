@@ -281,7 +281,7 @@ function populateReviewModal(address, id, name) {
 	$('#tradingNamer').html(name);
 
 	// ajax calls get all reviews for this geoid
-	$.get( "/reviewavg?geoid=1", function( data ) {
+	$.get( "/reviewavg?geoid="+id, function( data ) {
 		data = $.parseJSON(data);
 		stars = getStarsHtml(data);
 		
@@ -290,7 +290,7 @@ function populateReviewModal(address, id, name) {
 
 
 	// ajax calls get all reviews for this geoid
-	$.get( "/review?geoid=1", function( data ) {
+	$.get( "/review?geoid="+id, function( data ) {
 		data = $.parseJSON(data);
 		$("#reviewcontent").html('');
 		$.each(data, function(i, item) {
@@ -421,7 +421,20 @@ $(document).ready(function() {
 	});
 	
 	$('#addreviewsave').click( function() {
-		alert($('#addreviewform').serializeObject());
+		console.log($('#addreviewform').serializeJSON());
+		alert(JSON.stringify($('#addreviewform').serializeJSON()));
+		$.ajax({
+			type: 'POST',
+			cache: false,
+			url: '/reviewadd',
+			data: $('#addreviewform').serializeJSON(),
+			datatype: 'json',
+			success: function(data) {
+				alert(data);
+			}
+		  });
+
+		$("#addreviewcancel").click();
 	});
 
 	map.whenReady(initialLoad); 
