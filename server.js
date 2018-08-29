@@ -56,7 +56,7 @@ app.get('/searchall', (req, res) => {
     var greeter = "http://" 
     	+ process.env.GEOSERVICE_SERVICE_HOST 
     	+ ":" + process.env.GEOSERVICE_SERVICE_PORT_HTTP 
-        + "/ws/data/searchall?type=cafe&searchterm=" + 
+        + "/ws/data/searchall?type=cafe&searchterm=" 
     	+ req.query['searchterm'];
 
     res.send(get(greeter));
